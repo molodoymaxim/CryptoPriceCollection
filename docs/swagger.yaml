@@ -1,0 +1,144 @@
+definitions:
+  types.AddCurrencyRequest:
+    properties:
+      coin:
+        type: string
+    required:
+    - coin
+    type: object
+  types.CurrencyPrice:
+    properties:
+      coin:
+        type: string
+      price:
+        type: number
+      timestamp:
+        type: integer
+    type: object
+  types.PriceRequest:
+    properties:
+      coin:
+        type: string
+      timestamp:
+        type: integer
+    required:
+    - coin
+    type: object
+info:
+  contact: {}
+paths:
+  /currency/add:
+    post:
+      consumes:
+      - application/json
+      description: Добавляет криптовалюту в список отслеживаемых (watched_currencies).
+      parameters:
+      - description: Запрос на добавление валюты
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/types.AddCurrencyRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'status: success'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: 'error: Invalid request body'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: 'error: Failed to add currency: <details>'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Добавить валюту
+      tags:
+      - currencies
+  /currency/price:
+    post:
+      consumes:
+      - application/json
+      description: Возвращает последнюю цену валюты (без timestamp) или ближайшую
+        цену к указанному времени (с timestamp).
+      parameters:
+      - description: Запрос на получение цены
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/types.PriceRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешное получение цены
+          schema:
+            $ref: '#/definitions/types.CurrencyPrice'
+        "400":
+          description: 'error: Invalid request body'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: 'error: Price not found'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: 'error: Failed to fetch price: <details>'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Получить цену валюты
+      tags:
+      - currencies
+  /currency/remove:
+    post:
+      consumes:
+      - application/json
+      description: Удаляет криптовалюту из списка отслеживаемых (watched_currencies),
+        сохраняя исторические цены в currency_prices.
+      parameters:
+      - description: Запрос на удаление валюты
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/types.AddCurrencyRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'status: success'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: 'error: Invalid request body'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: 'error: Failed to remove currency: <details>'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Удалить валюту
+      tags:
+      - currencies
+swagger: "2.0"
